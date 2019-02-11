@@ -1,5 +1,5 @@
 # Classification-of-X-Ray-Images
-Let's see whether Neural Networks can find whether the X-Ray image is og of male or female
+Let's see whether Neural Networks can find whether the X-Ray image is of of male or female
 
 ## Training
 Download the data from kaggle https://www.kaggle.com/kmader/rsna-bone-age/ and unzip it, it will have a train folder containiing images and a .csv file containing labels
