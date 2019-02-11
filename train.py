@@ -4,20 +4,20 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-
+#load file list of images and their corresponding labels
 def load_file_list_and_labels(directory,path_to_csv):
     
     age_df=pd.read_csv(path_to_csv)
     age_df['path'] = age_df['id'].map(lambda x: os.path.join(directory, 
                                                           '{}.png'.format(x)))
 
-    age_df["gender"]=age_df['male'].map(lambda x: 0 if x==True else 1)
+    age_df["gender"]=age_df['male'].map(lambda x: 0 if x==True else 1)//assign binary labels for males and females
     file_list=age_df['path'].values.tolist()
     labels=age_df['gender'].values.tolist()
 
     return file_list,labels
 
-
+#load images
 def load_image_and_labels(image_filename,label):
     image_bytes=tf.read_file(image_filename)
     pixels=decode_image(image_bytes)
@@ -27,13 +27,14 @@ def decode_image(img_bytes):
     pixels = tf.image.decode_image(img_bytes,channels=1)
     return tf.cast(pixels, tf.uint8)
 
-
+#resize images to 228*228  for the input of our network
 def resize_image(filename,image,label):
     image.set_shape([2044,1514,1])
     pixels=tf.image.resize_images(image,size=[228,228],method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
-    
     return filename,pixels,label
-
+#augment the data I did the following augmentation
+#1 rotate images
+#2 flip images
 def random_orientation(name,image, label):
     # This function will output boxes x1, y1, x2, y2 in the standard orientation where x1 <= x2 and y1 <= y2
     rnd = tf.random_uniform([], 0, 9, tf.int32)
@@ -59,13 +60,13 @@ def random_orientation(name,image, label):
                                 tf.equal(rnd, 8): f8})
 
     return name,image_tile,label
-
+#input function to feed the data to our model
 def train_input_fn(filelist,labels,batch_size,num_epochs,resize=True,rnd_orientation):
     dataset= tf.data.Dataset.from_tensor_slices((tf.constant(file_list), tf.constant(labels)))
     dataset=dataset.map(load_image_and_labels)
     if resize==True:
        dataset=dataset.map(resize_image)
-    if rnd_orientation==True
+    if rnd_orientation==True#for augmentation
        dataset=dataset.map(random_orientation)
     if shuffle==True:
        dataset=dataset.shuffle(1000)
@@ -136,14 +137,10 @@ def cnn_model_fn(features, labels, mode):
       name="convolution5",
       activation=tf.nn.relu,padding='same')
 
-
-  
   flat = tf.reshape(conv5, [-1,12*12*256])
   
-  
-
   dense1 = tf.layers.dense(inputs=flat, units=4096, activation=tf.nn.relu,name="dense1",)
-
+  #add dropout regularization
   dropout1 = tf.layers.dropout(
       inputs=dense1, rate=0.5, training=mode == tf.estimator.ModeKeys.TRAIN)
     
