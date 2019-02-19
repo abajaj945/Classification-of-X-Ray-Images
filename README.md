@@ -15,7 +15,5 @@ With data augmentation the model achieves a accuracy of 80%
 The model can improved by
 
 1.Increased image resolution for training
-
 2.Using a deeper network
-
 3. Tuning Hyperparameters
