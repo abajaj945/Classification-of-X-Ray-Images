@@ -203,7 +203,7 @@ def main(argv):
                                     params=hparams)
 
    estimator.train(input_fn=train_ip, max_steps=200000)
-   eval_ip= train_input_fn(ytrain, ytest, batch_size=10, num_epochs=1, resize=True, rnd_orientation=False)
+   eval_ip= train_input_fn(Xtest, ytest, batch_size=10, num_epochs=1, resize=True, rnd_orientation=False)
    eval_res=estimator.evaluate(input_fn=eval_ip)
    print("accuracy=",eval_res)
 
